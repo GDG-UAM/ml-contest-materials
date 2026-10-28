@@ -1,0 +1,5 @@
+# training data: too large for git, downloaded from the GitHub release (see README)
+data/*.npz
+# local outputs
+results/
+__pycache__/
