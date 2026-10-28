@@ -10,6 +10,7 @@ prediction-time budget.
 | `harness.py`          | the official evaluation harness: run it to test your model locally      |
 | `examples/`           | a baseline: generic features + scikit-learn gradient boosting           |
 | `data/train_100k.npz` | training data, 100,000 labeled samples (download it, see below)         |
+| `data/test_demo.npz`  | demo test set, 400 labeled samples drawn like the evaluation data       |
 
 ## Setup
 
@@ -21,6 +22,8 @@ cd ml-contest-materials
 pip install numpy scikit-learn
 # training data (413 MB); in Windows PowerShell write curl.exe instead of curl
 curl -L --create-dirs -o data/train_100k.npz https://github.com/GDG-UAM/ml-contest-materials/releases/latest/download/train_100k.npz
+# demo test set (1.7 MB)
+curl -L --create-dirs -o data/test_demo.npz https://github.com/GDG-UAM/ml-contest-materials/releases/latest/download/test_demo.npz
 ```
 
 Run every command below from the repository folder.
@@ -98,6 +101,8 @@ ds[j]       # row j as the exact Sample your model would receive
 - The evaluation data may differ from the training data in noise, ranges and class balance. Don't
   rely on quirks of the training file.
     - PS: Mean accuracy of the baseline model is only ~0.41 in test. Remember to analyze structural differences in the data.
+- `data/test_demo.npz` has 400 labeled samples drawn like the evaluation data, so you can check
+  your model on them (see [Local evaluation](#local-evaluation)).
 
 ## How evaluation works
 
@@ -167,6 +172,17 @@ np.savez("data/val.npz", series=ds.series[val], labels=ds.labels[val],
 ```bash
 python harness.py evaluate --model my_model.py --source file:data/val.npz
 ```
+
+To check your model on data drawn like the evaluation data, use the demo test set. The official
+evaluation uses new samples, not these.
+
+```bash
+python harness.py evaluate --model my_model.py --source file:data/test_demo.npz
+```
+
+The run ends once the 400 samples are used up, so expect a lower score than a full 60 s run gives
+(the score grows with the number of samples you answer). Use it to compare accuracy and to compare
+your models with each other.
 
 Don't edit `harness.py` or `competition_api.py`: the official evaluation uses its own copies.
 If `harness.py` warns that it differs from the official version, download it again.
