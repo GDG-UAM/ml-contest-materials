@@ -1,5 +1,7 @@
 # GDG UAM ML Contest: participant materials
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/GDG-UAM/ml-contest-materials/blob/main/colab.ipynb)
+
 Classify multichannel time series into 8 classes. Your model sees one sample at a time, and the
 clock is running: you are scored on how many samples you answer, and how well, within a fixed
 prediction-time budget.
@@ -9,6 +11,7 @@ prediction-time budget.
 | `competition_api.py`  | `Sample`, `ABSTAIN`, `N_CLASSES`, `load_dataset` and the model contract |
 | `harness.py`          | the official evaluation harness: run it to test your model locally      |
 | `examples/`           | a baseline: generic features + scikit-learn gradient boosting           |
+| `colab.ipynb`         | the same in Google Colab: materials, data, baseline, submission check   |
 | `data/train_100k.npz` | training data, 100,000 labeled samples (download it, see below)         |
 | `data/test_demo.npz`  | demo test set, 400 labeled samples drawn like the evaluation data       |
 
@@ -26,6 +29,9 @@ curl -L --create-dirs -o data/train_100k.npz https://github.com/GDG-UAM/ml-conte
 curl -L --create-dirs -o data/test_demo.npz https://github.com/GDG-UAM/ml-contest-materials/releases/latest/download/test_demo.npz
 ```
 
+Or open [`colab.ipynb`](colab.ipynb) in Google Colab (the badge above): it does all of this for
+you, and runs the baseline.
+
 Run every command below from the repository folder.
 
 Quick check with the baseline:
@@ -40,7 +46,9 @@ python harness.py evaluate --model examples/baseline_model.py    # evaluates it 
 Submit a GitHub repository that contains:
 
 - `model.py` at the top level, defining `class Model` (see below);
-- your trained model: weights and any helper modules `model.py` loads.
+- your trained model: weights and any helper modules `model.py` loads;
+- `requirements.txt` with the libraries `model.py` uses: we install them before the evaluation,
+  since there is no internet while your model runs.
 
 Nothing is trained on our side: `Model()` must load your already trained model from the
 repository. Email the repository link to all four organizers: **gdguam@gmail.com,
@@ -105,6 +113,11 @@ ds[j]       # row j as the exact Sample your model would receive
   your model on them (see [Local evaluation](#local-evaluation)).
 
 ## How evaluation works
+
+**Every model is evaluated in Google Colab**, so all teams are compared under the same conditions.
+You don't need Colab to develop: any machine with Python 3.10+ works, and `harness.py` applies
+the same limits there. Speeds differ between machines, though, so if your model is close to the
+time limits, try it in Colab too ([`colab.ipynb`](colab.ipynb)).
 
 Each team's model is evaluated in 3 independent runs, and the ranking uses the mean score. Each
 run starts a fresh process and goes through three phases:
